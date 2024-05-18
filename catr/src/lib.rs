@@ -1,13 +1,23 @@
-use std::error::Error;
+use std::{error::Error, fs::File, io::{self, BufRead, BufReader}};
 use clap::{App, Arg};
 
 type MyResult<T> = Result<T, Box<dyn Error>>;
 
 pub fn run(config: Config) -> MyResult<()> {
     for file_name in config.files {
-        println!("{}", file_name);
+        match open(&file_name) {
+            Err(err) => eprintln!("Failed to open {}: {}",file_name, err),
+            Ok(_) => println!("Opened {}", file_name)
+        }
     }
     Ok(())
+}
+
+fn open(file_name: &str) -> MyResult<Box<dyn BufRead>> {
+    match file_name {
+        "-" => Ok(Box::new(BufReader::new(io::stdin()))),
+        _ => Ok(Box::new(BufReader::new(File::open(file_name)?)))
+    }
 }
 
 pub fn get_args() -> MyResult<Config> {
