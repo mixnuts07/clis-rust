@@ -7,7 +7,19 @@ pub fn run(config: Config) -> MyResult<()> {
     for file_name in config.files {
         match open(&file_name) {
             Err(err) => eprintln!("Failed to open {}: {}",file_name, err),
-            Ok(_) => println!("Opened {}", file_name)
+            Ok(file) => {
+                let mut line_num = 0;
+                for line_result in file.lines() {
+                    let line = line_result?;
+                    line_num += 1;
+
+                    if config.number_lines {
+                        println!("{:>6}\t{}", line_num, line)
+                    } else {
+                        println!("{}", line);
+                    }
+                }
+            }
         }
     }
     Ok(())

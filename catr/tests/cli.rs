@@ -23,7 +23,6 @@ fn usage() -> Result<()> {
     Ok(())
 }
 
-// --------------------------------------------------
 fn gen_bad_file() -> String {
     loop {
         let filename: String = rand::thread_rng()
